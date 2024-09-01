@@ -1,3 +1,5 @@
 # 0x00. AirBnB clone - The console
-The start of AirBNB project
-This is a continous towards the Airbnb project
+
+* Description
+Creating a command interpreter that can do the following:-
+- create a parent class that all classes can inherit from
