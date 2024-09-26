@@ -12,7 +12,7 @@ class BaseModel:
 
     format = "%Y-%m-%dT%H:%M:%S.%f"
 
-    def __init__(self, *_, **kwargs):
+    def __init__(self, *args, **kwargs):
         """constructor"""
         if len(kwargs) != 0:
             for k, v in kwargs.items():
