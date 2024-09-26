@@ -1,36 +1,46 @@
-#!/usr/bin/python3
-"""
-Create a base model that contains common
-attributes for other classes
-"""
-import uuid
+#!/user/bin/python3
+"""Base class to hold the projects models"""
+
+from uuid import uuid4
 from datetime import datetime
+from copy import deepcopy
+import json
 
 
 class BaseModel:
-    def __init__(self):
-        self.id = str(uuid.uuid4())
+    """Base Class model"""
 
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+    format = "%Y-%m-%dT%H:%M:%S.%f"
+
+    def __init__(self, *_, **kwargs):
+        """constructor"""
+        if len(kwargs) != 0:
+            for k, v in kwargs.items():
+                if k != "__class__":
+                    if k == "created_at" or k == "updated_at":
+                        setattr(self,
+                                k,
+                                datetime.strptime(v, BaseModel.format))
+                    else:
+                        setattr(self, k, v)
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = deepcopy(self.created_at)
 
     def save(self):
-        """Save and update date of an object"""
-        self.updated_at = datetime.utcnow()
+        """public instance methods: save object"""
+        self.updated_at = datetime.now()
 
     def to_dict(self):
-        """
-        returns a dictionary containing
-        all keys/values of __dict__ of the instanc
-        """
-        mydict = self.__dict__.copy()
-        mydict["__class__"] = self.__class__.__name__
-        mydict["created_at"] = self.created_at.isoformat()
-        mydict["updated_at"] = self.updated_at.isoformat()
+        """Returns object representation"""
+        mydct = {}
 
-        return mydict
+        mydct.update(self.__dict__)
+        mydct["__class__"] = self.__class__.__name__
+        mydct["created_at"] = self.created_at.strftime(BaseModel.format)
+        mydct["updated_at"] = self.updated_at.strftime(BaseModel.format)
+        return mydct
 
     def __str__(self):
-        """A method to print class name, id and its dict"""
-        class_name = self.__class__.__name__
-        return "[{}], ({}), {}".format(class_name, self.id, self.__dict__)
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
